@@ -4,7 +4,7 @@ from django.db import models
 class Category(models.Model):
     """Category model."""
 
-    name = models.CharField(max_length=64)
+    name = models.CharField(max_length=64, unique=True)
 
     class Meta:
         db_table = 'category'
@@ -19,7 +19,7 @@ class Category(models.Model):
 class City(models.Model):
     """City model."""
 
-    name = models.CharField(max_length=64)
+    name = models.CharField(max_length=64, unique=True)
 
     class Meta:
         db_table = 'city'
@@ -39,7 +39,7 @@ class Advert(models.Model):
     description = models.TextField()
     city = models.ForeignKey(City, on_delete=models.RESTRICT)
     category = models.ForeignKey(Category, on_delete=models.RESTRICT)
-    views = models.PositiveIntegerField()
+    views = models.PositiveIntegerField(default=0)
 
     class Meta:
         db_table = 'advert'
