@@ -1,3 +1,4 @@
+from django.db.models import F
 from django.db.models.query import QuerySet
 
 from ..core.exceptions import BaseServiceError
@@ -17,14 +18,13 @@ class AdvertService:
         return adverts
 
     @classmethod
-    def detail(cls, advert_id) -> Advert:
+    def detail(cls, advert_id) -> Advert | None:
         """Get advert."""
-        try:
-            advert = Advert.objects.select_related('city', 'category').get(id=advert_id)
-        except Advert.DoesNotExist as exc:
-            raise cls.AdvertNotFoundError() from exc
+        qs = Advert.objects.select_related('city', 'category').filter(id=advert_id)
+        if not qs:
+            raise cls.AdvertNotFoundError()
 
-        advert.views += 1
-        advert.save()
+        qs.update(views=F('views') + 1)
+        advert = qs.first()
 
         return advert
